@@ -5,9 +5,9 @@ import bcryptjs from "bcryptjs";
 export const test = (req, res) => {
   res.send("Api is working");
 };
+
 export const updateUser = async (req, res, next) => {
-  console.log(req.user);
-  if (req.user.userId !== req.params.userId) {
+  if (req.user.id !== req.params.userId) {
     return next(errorHandler(403, "You are not allowed to update this user"));
   }
   if (req.body.password) {
@@ -33,23 +33,23 @@ export const updateUser = async (req, res, next) => {
         errorHandler(400, "username can only contain letters and numbers")
       );
     }
-    try {
-      const updatedUser = await User.findByIdAndUpdate(
-        req.params.userId,
-        {
-          $set: {
-            username: req.body.username,
-            profilePicture: req.body.profilePicture,
-            email: req.body.email,
-            password: req.body.password,
-          },
+  }
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.userId,
+      {
+        $set: {
+          username: req.body.username,
+          profilePicture: req.body.profilePicture,
+          email: req.body.email,
+          password: req.body.password,
         },
-        { new: true }
-      );
-      const { password, ...rest } = updatedUser._doc;
-      res.status(200).json(rest);
-    } catch (err) {
-      next(err);
-    }
+      },
+      { new: true }
+    );
+    const { password, ...rest } = updatedUser._doc;
+    res.status(200).json(rest);
+  } catch (err) {
+    next(err);
   }
 };

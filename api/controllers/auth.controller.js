@@ -43,10 +43,10 @@ export const signin = async (req, res, next) => {
     }
     const token = jwt.sign(
       {
-        userId: validUser._id,
+        id: validUser._id,
+        isAdmin: validUser.isAdmin,
       },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      process.env.JWT_SECRET
     );
     const { password: pass, ...rest } = validUser._doc;
     res
@@ -68,13 +68,14 @@ export const google = async (req, res, next) => {
       const token = jwt.sign(
         {
           id: user._id,
+          isAdmin: user.isAdmin,
         },
         process.env.JWT_SECRET
       );
       const { password, ...rest } = user._doc;
       res
         .status(200)
-        .cookie("access-token", token, {
+        .cookie("access_token", token, {
           httpOnly: true,
         })
         .json(rest);
